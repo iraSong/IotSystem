@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Cache-Control" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta http-equiv="Cache" content="no-cache">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="screen-orientation" content="portrait">
+  <meta name="x5-orientation" content="portrait">
+  <link rel="icon" href="./img/favicon.png">
+  <title><%= htmlWebpackPlugin.options.title %></title>
+  <style>
+    html {
+      height: 100%;
+    }
+    .android body {
+      font-family: 'Roboto', 'Noto Sans S Chines'
+    }
+    .ios body {
+      font-family: 'Roboto', 'PingFangSC-Regular'
+    }
+  </style>
+  <!-- <script src="./js/rem.js"></script> -->
+
+  <script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=30c1841d87a2882ca6bf16c9f02f85d3&plugin=Map3D,AMap.DistrictSearch"></script>
+  <!-- UI组件库 1.0 -->
+  <script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+</head>
+<body>
+  <div id="loading-animation" style="display:block"></div>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+</html>
