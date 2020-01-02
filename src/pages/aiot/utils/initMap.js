@@ -51,7 +51,7 @@ function initMarker(projectList) {
       content: content,
       position: [+el.longitude, +el.latitude],
       offset: new AMap.Pixel(0, 0),
-      zooms: [10, 14],
+      zooms: [9, 15],
     })
     markerList.push(marker)
   })
@@ -90,6 +90,8 @@ function initInfoWindow() {
   })
   // 打开信息窗体
   infoWindow.open(map)
+  window.map = map
+  window.infoWindow = infoWindow
 
   map.on('click', function() {
     infoWindow.close(map)
@@ -102,7 +104,7 @@ function gotoCity(val='北京市') {
   return new Promise((resolve, reject) => {
     try {
       map.setCity(val,function(){
-        map.setZoom(12)
+        map.setZoom(11)
         window.localStorage.setItem('aiot-map-center', map.getCenter())
          resolve()
       })
@@ -123,8 +125,8 @@ const initCityMap = (currentCity, projectList) => {
       // zoomEnable: false,
       // dragEnable: false,
       mapStyle: 'amap://styles/fc3284054b1c8f3ff9f3e3e0ea0bdcec',
-      zoom: 12,
-      zooms: [11, 13],
+      zoom: 11,
+      zooms: [9, 15],
     })
   }
 

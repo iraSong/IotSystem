@@ -1,16 +1,42 @@
 <template>
   <div class="overview">
     <div class="title-overview"><i />信息总览</div>
-    <div class="body">
-      <div class="row" v-if="rank !='community'">
-        <div class="col" v-show="rank =='country'">入驻城市：<span class="yantramanav">{{ currentData.city | toThousandFilter }}</span></div>
-        <div class="col right-col" v-show="rank !='community'">项目数量：<span class="yantramanav">{{ currentData.project | toThousandFilter }}</span></div>
+    <!-- 全国 -->
+    <div class="body" v-if="rank =='country'">
+      <div class="row">
+        <div class="col">入驻城市：<span class="yantramanav">{{ currentData.city | toThousandFilter }}</span></div>
+        <div class="col right-col">社区数量：<span class="yantramanav">{{ currentData.project | toThousandFilter }}</span></div>
       </div>
       <div class="row">
         <div class="col">覆盖面积：<span class="yantramanav">{{ currentData.area | toThousandFilter }}</span>&nbsp;{{currentData.areaUnit}}</div>
         <div class="col right-col">住户数量：<span class="yantramanav">{{ currentData.user | toThousandFilter }}</span></div>
       </div>
       <div class="row v-hide">
+        <div class="col">楼栋数量：<span class="yantramanav">{{ currentData.build | toThousandFilter }}</span></div>
+        <div class="col right-col">车位数量：<span class="yantramanav">{{ currentData.parking | toThousandFilter }}</span></div>
+      </div>
+    </div>
+    <!-- 城市 -->
+    <div class="body" v-else-if="rank =='city'">
+      <div class="row">
+        <div class="col">社区数量：<span class="yantramanav">{{ currentData.project | toThousandFilter }}</span></div>
+        <div class="col right-col">覆盖面积：<span class="yantramanav">{{ currentData.area | toThousandFilter }}</span>&nbsp;{{currentData.areaUnit}}</div>
+      </div>
+      <div class="row">
+        <div class="col">住户数量：<span class="yantramanav">{{ currentData.user | toThousandFilter }}</span></div>
+        <div class="col right-col">楼栋数量：<span class="yantramanav">{{ currentData.build | toThousandFilter }}</span></div>
+      </div>
+      <div class="row v-hide">
+        <div class="col">车位数量：<span class="yantramanav">{{ currentData.parking | toThousandFilter }}</span></div>
+      </div>
+    </div>
+    <!-- 社区 -->
+    <div class="body" v-else>
+      <div class="row">
+        <div class="col">覆盖面积：<span class="yantramanav">{{ currentData.area | toThousandFilter }}</span>&nbsp;{{currentData.areaUnit}}</div>
+        <div class="col right-col">住户数量：<span class="yantramanav">{{ currentData.user | toThousandFilter }}</span></div>
+      </div>
+      <div class="row">
         <div class="col">楼栋数量：<span class="yantramanav">{{ currentData.build | toThousandFilter }}</span></div>
         <div class="col right-col">车位数量：<span class="yantramanav">{{ currentData.parking | toThousandFilter }}</span></div>
       </div>

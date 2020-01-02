@@ -1,3 +1,10 @@
+/**
+ * @summary 拷贝sass 平台代码
+ * @author songwh
+ * 
+ * Created at     : 2019-08-05 11:32:49
+ * Last modified  : 2019-12-05 12:04:17
+ */
 var _backend = {
   requesturl(paras) {
     var url = location.href

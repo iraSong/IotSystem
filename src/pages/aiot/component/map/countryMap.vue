@@ -41,7 +41,7 @@
                 <div class="bg-blur"></div>
                 <div class="model-title">{{it.cityName}}</div>
                 <div class="model-item">
-                  <div class="left">项目总数：</div>
+                  <div class="left">社区总数：</div>
                   <div>{{it.project}}</div>
                 </div>
                 <div class="model-item">
@@ -72,7 +72,7 @@
                 <div class="bg-blur red"></div>
                 <div class="model-title">{{it.cityName}}</div>
                 <div class="model-item">
-                  <div class="left">项目总数：</div>
+                  <div class="left">社区总数：</div>
                   <div>{{it.project}}</div>
                 </div>
                 <div class="model-item">
@@ -121,7 +121,7 @@ export default {
   computed: {
     ...mapState(['rank', 'rankName']),
     isWidth() {
-      return 1920/1080 > window.screen.availWidth/window.screen.availHeight
+      return 1920/1080 > window.screen.availWidth/document.documentElement.clientHeight
     }
   },
   components: {

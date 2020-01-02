@@ -1,8 +1,9 @@
 <template>
   <!-- 视频监控列表 -->
   <div class="dialog-main">
+    <!-- 标题 -->
     <div class="dialog-title">
-      <div class="name">{{selectDevice.name}}设备</div>
+      <div class="name">{{selectDevice.buildName}}设备</div>
       <div class="tab flex-center">
         <div 
           v-for="it in deviceTypeList" :key="it.deviceType"
@@ -13,11 +14,46 @@
       </div>
       <div class="close" @click.stop="close" />
     </div>
-
+    <!-- 列表 -->
     <div v-if="accessList && accessList.length >0" class="dialog-content" >
-      <!-- 房间设备 -->
+      <!-- 水电表--> 
+      <template v-if="listType == 'waterWatt'">
+        <!-- 公区水电表--> 
+        <template v-if="publicList && publicList.length > 0">
+          <div class="sub-title">公区{{name}}表</div>
+          <div class="wrap-item" v-if="publicList && publicList.length > 0">
+            <div 
+              v-for="(it, idx) in publicList"
+              :key="idx"
+              :class="[{'red': it.deviceStatus === '0'}, 'room item']"
+              @click="changeDialog(it)">
+                <div>
+                  {{it.deviceProperties.location | parseWaterWattLocation}}
+                </div>
+                <span v-if="it.deviceStatus === '0'">离线</span>
+            </div>
+          </div>
+        </template>
+        <!-- 房屋水电表--> 
+        <template v-if="roomList && roomList.length > 0">
+          <div class="sub-title">房屋{{name}}表</div>
+          <div class="wrap-item">
+            <div 
+              v-for="(it, idx) in roomList"
+              :key="idx"
+              :class="[{'red': it.deviceStatus === '0'}, 'room item']"
+              @click="changeDialog(it)">
+                <div>
+                  {{it.deviceProperties.location | parseWaterWattLocation}}
+                </div>
+                <span v-if="it.deviceStatus === '0'">离线</span>
+            </div>
+          </div>
+        </template>
+      </template>
+      <!-- 房间设备 显示房间号 -->
       <div
-          v-if="listType == 'roomDevice'"
+          v-else-if="listType == 'roomDevice'"
           class="wrap-item">
         <div 
           v-for="(it, idx) in accessList"
@@ -33,7 +69,7 @@
             <span v-if="it.deviceStatus === '0'">离线</span>
         </div>
       </div>
-      <!-- 其他 -->
+      <!-- 其他  显示location + 设备名称-->
       <div
           v-else
           class="wrap-item">
@@ -42,115 +78,16 @@
           :key="idx"
           :class="[{'red': it.deviceStatus === '0'}, 'item']"
           @click="changeDialog(it)">
-            <div v-if="Array.isArray(it.deviceProperties.location)">
-              <template v-if="it.deviceProperties.location[0].groupName">
-                {{it.deviceProperties.location[0].groupName}}/
+            <div>
+              <template v-if="selectDevice.deviceType =='lockergateway'">
+                {{it.desc}}
               </template>
-               <template v-if="it.deviceProperties.location[0].unitName">
-                {{it.deviceProperties.location[0].unitName}}/
-              </template>
-               <template v-if="it.deviceProperties.location[0].gateName">
-                {{it.deviceProperties.location[0].gateName}}
-              </template>
-              {{it.deviceName}}
-            </div>
-            <div v-else >
-              <template v-if="it.deviceProperties.location.groupName">
-                {{it.deviceProperties.location.groupName}}/
-              </template>
-               <template v-if="it.deviceProperties.location.unitName">
-                {{it.deviceProperties.location.unitName}}/
-              </template>
-               <template v-if="it.deviceProperties.location.gateName">
-                {{it.deviceProperties.location.gateName}}
-              </template>
+              {{it.deviceProperties.location | parseLocation}}
               {{it.deviceName}}
             </div>
             <span v-if="it.deviceStatus === '0'">离线</span>
         </div>
-        <!-- 室内设备 可以定位房间 -->
-        <!-- <div 
-          v-if="listType == 'roomDevice'"
-          v-for="(it, idx) in accessList"
-          :key="idx"
-          :class="[{'red':!+it.deviceStatus}, 'room item']"
-          @click="changeDialog(it)">
-            <div v-if="Array.isArray(it.deviceProperties.location)">
-              {{it.deviceProperties.location[0].roomName}}
-            </div>
-            <div v-else>
-              {{it.deviceProperties.location.roomName}}
-            </div>
-
-            <span v-if="!+it.deviceStatus">离线</span>
-        </div> -->
-        <!-- 二代门禁 和 四代门禁 -->
-        <!-- <div 
-          v-if="listType == 'mj'"
-          v-for="(it, idx) in accessList"
-          :key="idx"
-          class="item"
-          @click="changeDialog(it)">
-            <template v-if="Array.isArray(it.deviceProperties.location)">
-              {{it.deviceProperties.location[0].groupName}}/
-              {{it.deviceProperties.location[0].unitName}}/
-              {{it.deviceProperties.location[0].gateName}}
-            </template>
-            <template v-else>
-              {{it.deviceProperties.location.groupName}}/
-              {{it.deviceProperties.location.unitName}}/
-              {{it.deviceProperties.location.gateName}}
-            </template>
-        </div> -->
-        <!-- 其他不能定位房间的设备 -->
-        <!-- <div 
-          v-if="listType == 'other'"
-          v-for="(it, idx) in accessList"
-          :key="idx"
-          class="item"
-          @click="changeDialog(it)">
-            <template v-if="Array.isArray(it.deviceProperties.location)">
-              {{it.deviceProperties.location[0].unitName}}
-            </template>
-            <template v-else>
-              {{it.deviceProperties.location.unitName}}
-            </template>
-            {{it.deviceName}}
-        </div> -->
       </div>
-      <!-- 水电表门锁 -->
-      <!-- 网关 -->
-      <!-- <div class="sub-title">网关</div>
-      <div class="wrap-item">
-        <div  
-          v-for="(it, idx) in accessList" :key="idx"
-          class="room item"
-          @click="changeDialog(it)">
-            {{it.deviceProperties.location[0].gateName}}
-        </div>
-      </div> -->
-      <!-- 公区 水表--> 
-      <!-- <template v-if="cutTab.deviceType == 'water' || cutTab.deviceType == 'hotwater'">
-        <div class="sub-title">公区水表</div>
-        <div class="wrap-item">
-          <div  
-            v-for="(it, idx) in accessList" :key="idx"
-            :class="[{'room': cutTab.deviceType == 'inner'}, 'item']"
-            @click="changeDialog(it)">
-              {{it.deviceProperties.location[1].gateName}}{{it.deviceProperties.location[1].direction}}
-          </div>
-        </div>
-      </template> -->
-      <!-- 房屋 -->
-      <!-- <div class="sub-title">房屋{{deviceName}}</div>
-      <div v-if="romList && romList.length > 0" class="wrap-item">
-        <div  
-          v-for="(it, idx) in romList" :key="idx"
-          :class="[{'room': cutTab.deviceType == 'inner'}, 'item']"
-          @click="changeDialog(it)">
-            {{it.deviceProperties.location[2].roomName}}
-        </div>
-      </div> -->
     </div>
   </div>
 </template>
@@ -163,45 +100,45 @@ export default {
     return {
       cutTab: '', // 当前tab 值为 deviceType
       deviceTypeList: [], // tab list
-
       accessList: [],
-
-      // 网关
-      gateList: [{
-        name: '1 楼网关'
-      },{
-        name: '2 楼网关'
-      }],
-
-      // 公共区
-      publicList: [{
-        name: '1 楼网关'
-      }],
-
-      romList: [{
-        name: '301'
-      },{
-        name: '302'
-      }],
-
+      publicList: [], // 公共区
+      roomList: [], // 房屋
     }
   },
   computed: {
     ...mapState(['rank', 'rankName']),
     ...mapGetters(['projectId']),
+    name() {
+      /* eslint-disable no-unreachable */
+      switch(this.cutTab.deviceType) {
+        // 通行设备
+        case 'elec':
+          return '电'
+          break
+        case 'hotwater':
+          return '水'
+          break
+        case 'water':
+          return '水'
+          break
+        default:
+          return ''
+      }
+    },
     listType(){
-      if(this.cutTab.deviceType == 'roommastermachhine'
+      if(this.cutTab.deviceType == 'elec'
+          || this.cutTab.deviceType == 'hotwater'
+          || this.cutTab.deviceType == 'water') {
+          // 水电表列表需要显示公区和房间水电表
+        return 'waterWatt'
+      } else if(this.cutTab.deviceType == 'roommastermachhine'
           || this.cutTab.deviceType == 'roompad'
           || this.cutTab.deviceType == 'roomslavermachine'
-          || this.cutTab.deviceType == 'elec'
-          || this.cutTab.deviceType == 'hotwater'
-          || this.cutTab.deviceType == 'water'
           || this.cutTab.deviceType == 'locker'
         ) {
+          // 这些设备显示房间号
         return 'roomDevice'
-      } else if(this.cutTab.deviceType == 'doorctl_v2' || this.cutTab.deviceType == 'doorctl') {
-        return 'mj'
-      }else {
+      } else {
         return 'other'
       }
     },
@@ -228,6 +165,10 @@ export default {
               .then((res) => {
                 this.cutTab = this.deviceTypeList[0]
                 this.accessList = res.data.deviceList
+                if(this.listType == 'waterWatt') {
+                  // 水电表 需要区分房屋和公区
+                  this.dealListData(this.accessList)
+                } 
               })
           }
         })
@@ -237,6 +178,10 @@ export default {
         .then((res) => {
           this.cutTab = tab // tab 对象
           this.accessList = res.data.deviceList
+          if(this.listType == 'waterWatt') {
+           // 水电表 需要区分房屋和公区
+            this.dealListData(this.accessList)
+          } 
         })
     },
     getDeviceList(tab) {
@@ -245,15 +190,35 @@ export default {
         url:'/api/json/platformDeviceApi/getDeviceList',
         data:{
           projectId: this.projectId,
-          buildId: this.selectDevice.id,
+          buildId: this.selectDevice.buildId,
           sysType: tab.deviceType,
           pageNo: '1',
           pageSize: '1000',
         }
       })
     },
+    dealListData(list) {
+      let roomList = [] // 房屋水电表
+      let publicList = [] // 公区水电表
+      if(list && list.length > 0){
+        list.forEach(el => {
+          let location = el.deviceProperties.location
+          if(Array.isArray(location)){
+            location = location[0]
+          }
+          if(location.roomName){
+            roomList.push(el)
+          } else {
+            publicList.push(el)
+          }
+        })
+      }
+      console.log(roomList)
+      this.roomList = roomList
+      this.publicList = publicList
+    },
     changeDialog(val) {
-      let deviceInfo  = Object.assign({}, val, {deviceTypeName: this.cutTab.deviceName})
+      let deviceInfo  = Object.assign({}, val, {crtTabDeviceType: this.cutTab.deviceType}, {crtTabBuildId: this.selectDevice.buildId})
       this.$emit('changeDialog',deviceInfo)
     },
     close() {

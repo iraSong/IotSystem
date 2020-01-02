@@ -298,6 +298,7 @@ export default {
       border-radius: 50%;
     }
     .menu-item {
+      cursor: pointer;
       display: flex;
       align-items: center;
       margin-left:20px;

@@ -21,11 +21,11 @@
             <div class="menu-item" @click="activeMenu($event, '2-1')">使用指南</div>
             <div class="menu-item" @click="activeMenu($event, '2-2')">调用方式</div>
             <div class="menu-item" @click="activeMenu($event, '2-3')">签名机制</div>
-            <div class="menu-item"@click="activeMenu($event, '2-4')" >登录鉴权</div>
+            <div class="menu-item" @click="activeMenu($event, '2-4')" >登录鉴权</div>
 
             <div class="menu-item" @click="activeMenu($event, '2-5')">设备管理</div>
             <div class="menu-item" @click="activeMenu($event, '2-6')">服务管理</div>
-            <div class="menu-item"@click="activeMenu($event, '2-7')" >错误码</div>
+            <div class="menu-item" @click="activeMenu($event, '2-7')" >错误码</div>
           </div>
           
           <div class="sub-menu">
@@ -246,7 +246,7 @@
         <p>生成原文如下：<br />0010010010100125d3ac8d245ce09927536e0c690d45aed1ed149679271613847b050fd03c3ec096786415fad62b4def4e36e461555553652723<br />签名算法如下：
         </p>
         <p>
-          private static final String SHA256_WITH_RSA = "SHA256withRSA";
+          `private static final String SHA256_WITH_RSA = "SHA256withRSA";
           
           public static String sign(String plainText, String privateKeyBase64) throws Exception {
               RSAPrivateKey rsaPrivateKey = RSAPrivateCrtKeyImpl.newKey(Base64.getDecoder().decode(privateKeyBase64));
@@ -274,7 +274,7 @@
               publicSignature.update(plainText.getBytes(StandardCharsets.UTF_8));
               byte[] signatureBytes = Base64.getDecoder().decode(signature);
               return publicSignature.verify(signatureBytes);
-          }
+          }`
         </p>
       </div>
 
@@ -544,8 +544,9 @@
     <qd-login ref="login" />
   </div>
 </template>
-<script>
 
+<script>
+/* eslint-disable */
 import qdHeader from './component/header.vue'
 import qdLogin from '@components/login.vue'
 

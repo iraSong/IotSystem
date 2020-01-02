@@ -7,6 +7,8 @@
   vue.config.js 中配置多页面  
   文件夹名称和html名称需相同
   默认会读取 src/pages/【文件夹】/【文件夹】.html
+
+  
   如果需自定义页面配置请在vue.config.js 中添加
 
 # 项目优化
@@ -23,4 +25,11 @@ dev: 'http://devdbcenter.qdingnet.com/qdh-cloud-web',
 szqa: 'http://qasc.qdingnet.com.sz/qdh-cloud-web',
 bjqa: 'https://qasc.qdingnet.com/qdh-cloud-web',
 boss: 'https://sc.qdingnet.com/qdh-cloud-web'
+
+# 2019.08.22 优化
+> 新建页面
+  *.wp.js 为页面默认加载的入口js 文件
+  html 文件提取到public/index.html
+  页面title 在 title.js 文件里面配置
+
 

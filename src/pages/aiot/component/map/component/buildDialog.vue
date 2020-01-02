@@ -23,10 +23,13 @@ import { mapState } from 'vuex'
 
 import deviceList from './buildDeviceList.vue'
 
-import inner from './dialog-content/inner.vue'
+import other from './dialog-content/other.vue'
 import access from './dialog-content/access.vue'
-import waterWatt from './dialog-content/waterWatt.vue'
 import lock from './dialog-content/lock.vue'
+import lift from './dialog-content/lift.vue'
+import park from './dialog-content/park.vue'
+import monitor from './dialog-content/monitor.vue'
+import waterWatt from './dialog-content/waterWatt.vue'
 
 import qdLockPassword from './dialog-content/lock-pwd.vue'
 
@@ -50,7 +53,7 @@ export default {
     ...mapState(['rank', 'rankName']),
     cutComponent() {
       /* eslint-disable no-unreachable */
-      switch(this.deviceInfo.deviceProperties.type) {
+      switch(this.deviceInfo.crtTabDeviceType) {
         // 水电表
         case 'water':
           return 'waterWatt'
@@ -75,7 +78,7 @@ export default {
         case 'facegate':
           return 'access'
           break
-        case 'faceSentry':
+        case 'facesentry':
           return 'access'
           break
         case 'unitdoorwaymacchine':
@@ -87,18 +90,34 @@ export default {
         case 'fencingdoorwaymacchine':
           return 'access'
           break
-        // 其他默认 室内设备
+        case 'facedoorwaymachine':
+          return 'access'
+          break
+
+        case 'lift':
+          return 'lift'
+          break
+        case 'park':
+          return 'park'
+          break
+        case 'monitor':
+          return 'monitor'
+          break
         default:
-          return 'inner'
+          return 'other'
       } 
     }
   },
   components: {
     deviceList,
-    inner,
+    other,
     access,
     lock,
+    lift,
+    park,
+    monitor,
     waterWatt,
+
     qdLockPassword,
   },
   mounted() {
@@ -150,14 +169,37 @@ export default {
     border-radius:2px;
     border:1px solid rgba(255,255,255,0.08);
     .dialog-title{
+      min-height: 58px;
       background:#283742;
       .name{
         font-weight:600;
         text-align: center;
         padding: 17px 0;
+        .attention{
+          width: 18px;
+          height: 18px;
+          vertical-align: sub;
+          margin-left: 10px;
+          position: relative;
+          display: inline-block;
+          .attention-img{
+            width: 18px;
+            height: 18px;
+          }
+          .cancel, .confirm{
+            cursor: pointer;
+            width: 56px;
+            height: 28px;
+            line-height: 28px;
+          }
+
+
+        }
       }
       .tab{
         .tab-item{
+          cursor: pointer;
+          font-size: 14px;
           padding: 0 14px 8px;
           &.active{
             color:#00B7FF;
@@ -165,6 +207,7 @@ export default {
         }
       }
       .close{
+        cursor: pointer;
         position: absolute;
         top: 0;
         right: 0;
@@ -184,8 +227,8 @@ export default {
       }
     }
     .dialog-content{
-      padding: 24px;
-      height: 460px;
+      padding: 24px 14px 0 14px;
+      height: 465px;
       overflow-y: auto;
 
       .sub-title{
@@ -193,13 +236,16 @@ export default {
         font-weight:600;
         color:rgba(255,255,255,0.4);
         margin-bottom: 4px;
+        padding-left:10px;
       }
       .wrap-item{
+        font-size: 14px;
         display: flex;
         justify-content: flex-start;
         flex-wrap: wrap;
 
         .item{
+          cursor: pointer;
           white-space: nowrap;
           overflow: hidden;
           text-overflow: ellipsis;
@@ -228,6 +274,7 @@ export default {
             color: #FF4646;
             border:1px solid rgba(255,70,70,0.2);
             span{
+              font-size: 12px;
               color:rgba(255,70,70,0.5);
             }
           }
@@ -267,6 +314,7 @@ export default {
         }
       }
       .dialog-content{
+        height: 495px;
         display: flex;
         justify-content: flex-start;
         flex-wrap: wrap;
@@ -328,17 +376,22 @@ export default {
           }
         }
         .title-table{
+          font-size: 14px;
           margin-bottom: 5px;
           .wrap-tab{
             font-size: 12px;
             display: flex;
             .item-tab{
               width: 72px;
-              height: 24px;
-              line-height: 24px;
-              border-radius:0px 2px 2px 0px;
+              padding: 2px 0;
               border:1px solid rgba(255,255,255,1);
               text-align: center;
+              &.border-left{
+                border-radius:2px 0px 0px 2px;
+              }
+              &.border-right{
+                border-radius:0px 2px 2px 0px;
+              }
               &.active{
                 color:rgba(31,46,59,1);
                 background:rgba(255,255,255,1);

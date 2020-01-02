@@ -1,6 +1,6 @@
 <template>
   <div class="body ">
-    <div :class="[bgClass, {'dim': isDim}, 'layout']" @click="togglePanel">
+    <div :class="[bgClass, {'dim': isDim}, 'layout']" @click="togglePanel" :blur="showDeviceTypeDialog">
       <!-- 头部 -->
       <qd-header ref="refHeader"/>
       <!-- 全国地图-->
@@ -50,6 +50,18 @@
 
     <!-- 修改密码 弹框 -->
     <qd-modify-password />
+    <!-- 设备类型 二级弹框 -->
+    <qd-device-type-detail />
+
+    <!-- 告警信息配置 弹框 -->
+    <qd-waring-config />
+    <!--重点关注信息配置 弹框 -->
+    <qd-attention-config />
+
+    <!-- 告警弹框 -->
+    <qd-confirm-dialog ref="confirmDialog" />
+
+
   </div>
 </template>
 <script>
@@ -66,29 +78,33 @@ import qdPeople from './component/people.vue'
 import qdCar from './component/car.vue'
 
 import qdIot from './component/iot.vue'
-import qdDevice from './component/device.vue'
 
-import qdExceptions from './component/bottom/exceptions.vue'
-import qdWorkorder from './component/bottom/workorder.vue'
-import qdWarning from './component/bottom/warning.vue'
+import qdExceptions from './component/community-view/exceptions.vue'
+import qdWorkorder from './component/community-view/workorder.vue'
+import qdWarning from './component/community-view/warning.vue'
 
-import qdExceptionsCountry from './component/country-view/exceptions.vue'
-import qdWorkorderCountry from './component/country-view/workorder.vue'
-import qdWarningCountry from './component/country-view/warning.vue'
+import qdExceptionsCountry from './component/country-city-view/exceptions.vue'
+import qdWorkorderCountry from './component/country-city-view/workorder.vue'
+import qdWarningCountry from './component/country-city-view/warning.vue'
 
 
-import qdMoreExceptions from './component/bottom/moreExceptions.vue'
-import qdMoreWorkorder from './component/bottom/moreWorkorder.vue'
-import qdMoreWarning from './component/bottom/moreWarning.vue'
+import qdMoreExceptions from './component/community-view/moreExceptions.vue'
+import qdMoreWorkorder from './component/community-view/moreWorkorder.vue'
+import qdMoreWarning from './component/community-view/moreWarning.vue'
 
-import qdMoreExceptionsCountry from './component/country-view/moreExceptions.vue'
-import qdMoreWorkorderCountry from './component/country-view/moreWorkorder.vue'
-import qdMoreWarningCountry from './component/country-view/moreWarning.vue'
+import qdMoreExceptionsCountry from './component/country-city-view/moreExceptions.vue'
+import qdMoreWorkorderCountry from './component/country-city-view/moreWorkorder.vue'
+import qdMoreWarningCountry from './component/country-city-view/moreWarning.vue'
 import qdModifyPassword from './component/modifyPassword.vue'
+import qdDeviceTypeDetail from './component/device-type-dialog/dialog.vue'
+
+import qdWaringConfig from './component/config-dialog/waring-dialog.vue'
+import qdConfirmDialog from './component/map/component/confirmDialog.vue'
+
+import qdAttentionConfig from './component/config-dialog/attention-dialog.vue'
 
 import { toMap } from './mixins/toMap.js'
 
-let timeObj = JSON.parse(window.localStorage.getItem('aiot-time'))
 export default {
   components: {
     qdHeader,
@@ -100,7 +116,6 @@ export default {
     qdPeople,
     qdCar,
     qdIot,
-    qdDevice,
 
     qdExceptions,
     qdWorkorder,
@@ -116,16 +131,21 @@ export default {
     qdMoreExceptionsCountry,
     qdMoreWorkorderCountry,
     qdMoreWarningCountry,
-    qdModifyPassword
+    qdModifyPassword,
+
+    qdDeviceTypeDetail,
+    qdWaringConfig,
+    qdAttentionConfig,
+
+    qdConfirmDialog,
   },
   mixins: [toMap],
   data() {
     return {
-      currentDate: `${timeObj.mon+1}.${timeObj.d}`,
     }
   },
   computed: {
-    ...mapState(['rank']),
+    ...mapState(['showDeviceTypeDialog','rank']),
     ...mapGetters(['isDim']),
     bgClass() {
       /* eslint-disable no-unreachable */
@@ -189,7 +209,7 @@ export default {
   &.country{
     // background-image: url("~@assets/img/demo/bg.png");
     // background-size: 100% 100%;
-    background: #000;
+    background: #000d11;
   }
   &.city{
     // background-image: url("~@assets/img/demo/city/city-bg.png");
@@ -202,6 +222,9 @@ export default {
   }
   &.dim{
     filter: blur(5px)
+  }
+  &[blur="true"] {
+    filter: blur(6px);
   }
 
   .main {
@@ -273,7 +296,7 @@ export default {
 }
 
 html, body{
-  background-color: #000e12;
+  background-color: #000e12 !important;
 }
 .item-pro {
   cursor: pointer;

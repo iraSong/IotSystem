@@ -5,12 +5,13 @@
  * @author songwh
  *
  * Created at     : 2019-05-05 17:34:46 
- * Last modified  : 2019-11-22 17:52:14
+ * Last modified  : 2019-12-30 11:25:01
  */
 
 import axios from 'axios'
 import { showLoading, hideLoading } from '@assets/js/loading.js'
 import commin from './comm.js'
+import { Message } from 'element-ui'
 
 let pending = []
 let CancelToken = axios.CancelToken
@@ -35,7 +36,14 @@ const request = axios.create({
 // request拦截器
 request.interceptors.request.use(
   config => {
-    showLoading()
+    // 显示加载动画
+    let notShowLoading = config.data.notShowLoading
+    if(notShowLoading) {
+      delete config.data['notShowLoading']
+    } else{
+      showLoading()
+    }
+
     // 实时搜索需要取消上一次请求
     if(config.data.cancelToken) {
       cancelPending(config)
@@ -76,6 +84,7 @@ request.interceptors.request.use(
     // 增加时间搓 防止缓存
     config.params = {
       _t: Date.parse(new Date())/1000,
+      notShowLoading: notShowLoading,
       ...config.params
     }
     return config
@@ -88,21 +97,38 @@ request.interceptors.request.use(
 // respone拦截器
 request.interceptors.response.use(
   response => {
-    hideLoading()
+    if(!response.config.params.notShowLoading) {
+      hideLoading()
+    }
     cancelPending(response.config)  //在一个axios响应后再执行一下取消操作，把已经完成的请求从pending中移除
-    if (response.data.code === 200) {
-      return response.data
+    if(response.data.code === 200 && !response.data.data) {
+      // 接口数据格式没按规定格式返回
+      return Promise.reject(response.data)
+    } else if (response.data.code === 200 && +response.data.data.result !== 1000) {
+      return Promise.resolve(response.data)
     } else if (response.data.code == '5002') {
       // token 过期 跳转登录页
       window.location.href = '/index.html'
     } else {
+      Message({
+        type: 'error',
+        message: response.data.msg || '网络异常,请稍后再试!'
+      })
       return Promise.reject(response.data)
     }
   },
   error => {
-    console.log('error-------hideLoading')
     hideLoading()
-    return Promise.reject(error)
+    if (axios.isCancel(error)) {
+      // 请求取消
+      throw new Error('cancelled')
+    } else {
+      Message({
+        type: 'error',
+        message: error.msg || '网络异常,请稍后再试!'
+      })
+      return Promise.reject(error)
+    }
   }
 )
 export default request

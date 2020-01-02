@@ -1,0 +1,61 @@
+  /* 修改iview 默认样式 */
+.qd-iview{
+  // 当选和多选宽
+  .ivu-radio-wrapper, .ivu-checkbox-wrapper {
+    font-size: 12px;
+    .ivu-radio-inner,.ivu-checkbox-inner {
+      background-color: transparent;
+      border:1px solid rgba(255,255,255,0.3);
+    }
+  }
+  .ivu-radio-wrapper-checked, .ivu-checkbox-wrapper-checked{
+    color: #00B7FF;
+    .ivu-radio-inner {
+      border:1px solid #00B7FF;
+    }
+  }
+
+  .ivu-checkbox-wrapper-checked{
+    .ivu-checkbox-inner {
+      background-color: #00B7FF;
+    }
+  }
+
+  .ivu-checkbox-wrapper-disabled {
+    cursor: not-allowed;
+    color:rgba(255,255,255,0.12);
+  }
+
+  .ivu-checkbox-disabled .ivu-checkbox-inner {
+    border-color: rgba(255,255,255,0.08);
+  }
+
+  // 时间选择器
+  .ivu-date-picker{
+    .ivu-input {
+      background: transparent;
+      border: none;
+      color: #00B7FF;
+    }
+  }
+  .ivu-select-dropdown {
+    background:#4d5862;
+  }
+  .ivu-time-picker-cells-cell-selected, .ivu-time-picker-cells-cell-selected:hover {
+    color: #00B7FF;
+    background:#4d5862;
+  }
+  .ivu-time-picker-cells-cell:hover {
+    background: #4d5862;
+  }
+  .ivu-time-picker-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .ivu-time-picker-with-range .ivu-picker-panel-content:after {
+    content: '';
+    background: rgba(255, 255, 255, 0.08);
+  }
+  .ivu-time-picker-cells-list {
+    border-left: 1px solid rgba(255, 255, 255, 0.08);
+  }
+}

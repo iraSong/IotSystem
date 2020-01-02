@@ -1,6 +1,7 @@
 const path = require('path')
 const glob = require('glob')
 const titles = require('./title.js')
+const webpack = require('webpack')
 
 function resolve(dir) {
   return path.join(__dirname,dir)
@@ -30,12 +31,22 @@ let pages = getEntry('./src/pages/**/*.wp.js')
 //   filename: 'experience.html'
 // }
 
+const IS_PROD = ['production', 'test'].includes(process.env.NODE_ENV)
+const extractConfig =  {
+  filename: 'css/[name].css?v=[hash]',
+  chunkFilename: 'css/[name].css?v=[hash]'
+}
+
 module.exports = {
   pages,
   publicPath: '',
   runtimeCompiler: true,
   productionSourceMap: false,
+  // 是否在开发环境下通过 eslint-loader 在每次保存时 lint 代码 (在生产构建时禁用 eslint-loader)
+  // 是否开启eslint保存检测 ,它的有效值为 true || false || 'error'
+  // lintOnSave: process.env.NODE_ENV !== 'production' ? 'error' : false,
   lintOnSave: false,
+
   chainWebpack: config => {
     config.module
       .rule('images')
@@ -51,11 +62,11 @@ module.exports = {
       .set('@components',resolve('./src/components'))
   },
   css: {
+    // 是否使用css分离插件 ExtractTextPlugin
+    extract: IS_PROD ? extractConfig : false,
     sourceMap: false,
-    extract: {
-      filename: 'css/[name].css?v=[hash]',
-      chunkFilename: 'css/[name].css?v=[hash]'
-    }
+    // 启用 CSS modules for all css / pre-processor files.
+    modules: false,
   },
   configureWebpack: {
     externals: {
@@ -64,6 +75,12 @@ module.exports = {
     output: {
       filename: 'js/[name].js?v=[hash]',
       chunkFilename: 'js/[name].js?v=[hash]'
-    }
+    },
+    plugins: [
+      new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery'
+      })
+    ],
   }
 }

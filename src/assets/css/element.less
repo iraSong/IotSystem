@@ -1,5 +1,5 @@
   /* 绝对定位的弹框 */
-.pwdType{ 
+.pwdType, .qd-le{ 
   background:#404d59;
   border:1px solid rgba(255,255,255,0.08);
 
@@ -165,10 +165,9 @@
   .el-input__inner:hover {
     border-color: transparent;
   }
-
 }
 
-.lock-password{
+.lock-password, .qd-le{
   input{
     flex: 1;
     padding-left: 8px;
@@ -198,6 +197,15 @@
     flex: 1;
   }
 
+  .el-input.is-disabled .el-input__inner {
+    border:1px solid rgba(255,255,255,0.08);
+    background:rgba(255,255,255,0.12);
+  }
+
+  .el-cascader .el-input .el-input__inner:focus, .el-cascader .el-input.is-focus .el-input__inner {
+    border-color: #82868c;
+  } 
+
   /* 时间选择器 */
   .el-date-editor--datetimerange.el-input, .el-date-editor--datetimerange.el-input__inner {
     flex:1;
@@ -218,4 +226,145 @@
     border-color: transparent;
   }
 
+}
+ 
+/** 级联选择器**/
+.qd-cascader{
+  background: #5b6a79;
+  border: 1px solid rgba(255,255,255,0.08);
+  &.el-popper .popper__arrow {
+    border-bottom-color: #5b6a79;
+  }
+  &.el-popper[x-placement^=bottom] .popper__arrow::after {
+    border-bottom-color: #5b6a79;
+  }
+  .el-cascader-menu {
+    color:rgba(255,255,255,0.8);
+  }
+  .el-cascader-node:hover{
+    background:rgba(255,255,255,0.06);
+  }
+  .el-cascader-node.in-active-path, .el-cascader-node.is-active, .el-cascader-node.is-selectable.in-checked-path {
+    color:rgba(255,255,255,0.8);
+    font-weight: 700;
+    background:rgba(0,183,255,1);
+  }
+  .el-cascader-menu {
+    border-right: solid 1px #606266;
+  }
+
+  .el-radio__inner {
+    border:1px solid rgba(255,255,255,0.3);
+    background-color: transparent;
+  }
+  .el-radio__inner::after {
+    background-color: transparent;
+    content: "";
+  }
+}
+/** message-box 弹框**/
+.qd-message-box{
+  background: rgba(255,255,255,0.12);
+  border-radius: 2px;
+  border: 1px solid rgba(255,255,255,0.08);
+  .el-message-box__content {
+    color: rgba(255,255,255,1);
+  }
+  .el-button {
+    border:1px solid rgba(255,255,255,0.4);
+    background: transparent;
+    color:rgba(255,255,255,0.8);
+    &:hover{
+      border:1px solid rgba(255,255,255,0.5);
+      color:rgba(255,255,255,0.9);
+      background: transparent;
+    }
+  }
+  .el-message-box__title {
+    color:rgba(255,255,255,0.8);
+  }
+  .el-button--primary {
+    color: #FFF;
+    background-color: #409EFF;
+    border-color: #409EFF;
+    &:hover{
+      color: #FFF;
+      background-color: #409EFF;
+      border-color: #409EFF;
+    }
+  }
+}
+
+.qd-filter-el{
+  padding-left: 10px;
+  color: rgba(255, 255, 255, 1);
+  outline: none;
+  height: 32px;
+  border-radius: 2px;
+
+  background: transparent;
+
+  .el-input__inner {
+    color: rgba(255, 255, 255, .8);
+    background-color: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    input {
+      background-color: transparent;
+      color: rgba(255, 255, 255, .8);
+    }
+  }
+  
+  .el-range-editor.is-active, .el-range-editor.is-active:hover {
+    border-color: rgba(255, 255, 255, .2);
+  }
+  .el-cascader .el-input .el-input__inner:focus, .el-cascader .el-input.is-focus .el-input__inner {
+    border-color: rgba(255, 255, 255, .2);
+  }
+}
+.qd-select{
+  border: none;
+  .el-input__inner {
+    color: rgba(255, 255, 255, .8);
+    background-color: transparent;
+    border: none;
+    input {
+      background-color: transparent;
+      color: rgba(255, 255, 255, .8);
+    }
+  }
+  .el-select .el-input__inner:focus {
+    border: none;
+  }
+}
+
+.el-message-box__status.el-icon-warning {
+  position: static;
+  float: left;
+  margin: 0 8px 0 9px;
+  transform: translate(0, 0);
+  width: 28px;
+  height: 24px;
+  background: url('../img/icon_warm.png') no-repeat center center;
+  background-size: contain;
+  &::before {
+    content: '';
+  }
+}
+
+.qd-error-message {
+  .el-message {
+    padding: 12px 15px 12px 20px;
+  }
+  &.el-message--error {
+    background:#FF4646;
+    border-radius:2px;
+    border-color: transparent;
+  }
+  &.el-message--error .el-message__content {
+    color:rgba(255,255,255,1);
+    border-color: transparent;
+  }
+  &.el-message .el-icon-error {
+    display: none;
+  }
 }

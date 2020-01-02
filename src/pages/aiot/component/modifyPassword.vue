@@ -56,8 +56,6 @@ export default {
     ...mapMutations(['toggleModifyPassword']),
     toggleDialog() {
       this.toggleModifyPassword()
-      // 重置初始值
-      this.reset()
     },
     reset() {
       this.oldPassword = ''
@@ -104,18 +102,22 @@ export default {
     }
   },
   watch: {
+    showModifyPassword(val) {
+      if(val) {
+        this.reset()
+      }
+    },
     oldPassword() {
-      this.oldErr = ''
       // 验证旧密码
       if(!this.oldPassword){
         this.oldErr = '旧密码不能为空'
         this.isPass = false
       } else {
+        this.oldErr = ''
         this.isPass = this.validIsPass() 
       }
     },
     newPassword() {
-      this.newErr = ''
       let reg1 =  /^[a-zA-Z0-9_-]{8,16}$/
       let reg2 =  /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/
 
@@ -130,6 +132,7 @@ export default {
         this.newErr = '至少1个大写，1个小写和1个数字'
         this.isPass = false
       } else {
+        this.newErr = ''
         this.isPass = this.validIsPass() 
       }
     },
@@ -142,6 +145,7 @@ export default {
         this.confirmErr = '两次密码不一致'
         this.isPass = false
       } else {
+        this.confirmErr = ''
         this.isPass = this.validIsPass() 
       }
     }

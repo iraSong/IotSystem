@@ -1,9 +1,9 @@
 // The Vue build version to load with the `import` command
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 
-import '../../mock/index.js' // mock 方式，正式发布时，注释掉该处即可
+// import '../../mock/aiot/second.js' // mock 方式，正式发布时，注释掉该处即可
 
-window.localStorage.setItem('token', 'v1_UU5LQm56KzdLYnJSL0V2WFQ4eUQyS2hIU0RZeDNZMlRzRVNKem04VDBKeUhBNjlUcWIvU0tiQlRSM2hNVGwvNWdWVlBFZUxEbGRWa2JydnFoSC85anMrMmtLYThmZ29oejFBczdNKzE0aXMvWVNnditRUFRCa3ZWMnE1R1dzenRJYnZKSGlNQXh5NFpWU3ozZ2twekFvb2FYaDZ6N2xRanBLenVZYktqY2ZDNE05R1hRanhVRlJCY0U2U09nOXI4R3VjVFBwZDJnM0xWanV1Q3FrTnJCalA3ejJnck5aZEF5VDZxai9TcWFMTT0dgGelPqVUNdEogO3KsDMn1PQvXBj2_bIGrCOSeneA36fk_U_j5HLomJfB-zITx7KISp_k1nDRFMPYXHfTlnlbswnC5s0mznp1adrXjhbjCVvRhc2jTG5s8A-9MU60uLwnW2p-euVcCUAcI46xR_Ue4x9UG3ORmUo--ORiGf7J8g..')
+window.localStorage.setItem('token', 'v1_UU5LQm56KzdLYnAvZnpmNFdaUXBFVTFiZ3JaT24yWDhuNFAzQXRaVFlMVVZTUVl5QjFDNFpEV094cVNFSG1PN2dWVlBFZUxEbGRVZjhPVUxwTDFJc09XK0dJMUxRVXhtejFBczdNKzE0aXMvWVNnditRUFRCaStBR3U5NDRBeEVKUXNOdHpmYTRUZ1pWU3ozZ2twekFvb2FYaDZ6N2xRanBLenVZYktqY2ZDc0NRdlFtc2E3YjR6MmJMUkJ3bzZncXc1VTJJcC9QcjR2bGN6bURmZDZORWNPTUFBbXpNcktSTStvcTd1SVN1UT09hssOeOtI6Pko-4aKHqvbcuA-pW2Ezo36GBmzeOS3UzTMfQZq9oblil0vMy3NZz93wQRq1SUfkmZN_Csy11ieo2jzrj111qboMlTWoRLmg4VGfSjhqxRSO2H4p3HoVymLHv871pcud_kf0shrVUjRbbjOoWyIgLtr-kZqiPru-w..')
 
 
 import request from '@assets/js/request.js' // axios
@@ -21,9 +21,12 @@ import store from './store/index.js'
 import '@assets/css/reset.css'
 import '@assets/css/base.less'
 import '@assets/css/element.less' // 重置element 默认样式
+import '@assets/css/iview.less' // 重置iview 默认样式
+
 
 // permission control
-import './permission.js'
+// import './permission.js'
+
 // global filters
 import * as filters from './filters.js' 
 // register global utility filters.

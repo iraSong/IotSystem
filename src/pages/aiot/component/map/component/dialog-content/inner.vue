@@ -3,35 +3,80 @@
   <div class="dialog-main detail">
     <div class="dialog-title">
       <div class="name">
-        <template v-if="Array.isArray(deviceInfo.deviceProperties.location)">
-          <template v-if="deviceInfo.deviceProperties.location[0].groupName">
-            {{deviceInfo.deviceProperties.location[0].groupName}}/
-          </template>
-            <template v-if="deviceInfo.deviceProperties.location[0].unitName">
-            {{deviceInfo.deviceProperties.location[0].unitName}}/
-          </template>
-            <template v-if="deviceInfo.deviceProperties.location[0].gateName">
-            {{deviceInfo.deviceProperties.location[0].gateName}}
-          </template>
-        </template>
-        <template v-else>
-          {{deviceInfo.deviceProperties.location.groupName}}/
-          {{deviceInfo.deviceProperties.location.unitName}}/
-          {{deviceInfo.deviceProperties.location.gateName}}
+        {{deviceInfo.deviceProperties.location | parseLocation}}
+        {{deviceInfo.deviceName}}
+        {{deviceInfo.crtTabDeviceType | typeToName}}
 
-          <template v-if="deviceInfo.deviceProperties.location.groupName">
-            {{deviceInfo.deviceProperties.location.groupName}}/
-          </template>
-            <template v-if="deviceInfo.deviceProperties.location.unitName">
-            {{deviceInfo.deviceProperties.location.unitName}}/
-          </template>
-            <template v-if="deviceInfo.deviceProperties.location.gateName">
-            {{deviceInfo.deviceProperties.location.gateName}}
-          </template>
-        </template>
-        {{deviceInfo.deviceTypeName}}
+        <div v-if="isAttention" class="attention">
+
+          <img v-if="focus === '1'"
+            @click="setAttention('0')" class="attention-img"
+            src="~@assets/img/demo/attention.png" />
+
+          <img v-else  
+            @click="setAttention('1')" 
+            class="attention-img" 
+            src="~@assets/img/demo/notAttention.png" />
+
+          <div
+            v-if="!noShowFlag"
+            class="open-panel">
+            <div class="panel-arrow"></div>
+            <div class="item">
+              被标记的设备将会出现在首页。
+            </div>
+            <div class="item">
+              <div class="footer">
+                <div class="footer-txt" @click="handleNoShow">不再提示</div>
+                <button class="confirm" @click="confirmNoShow">确定</button>
+              </div>
+            </div>
+          </div>
+          <!-- 关注上限 -->
+          <div
+            v-else-if="isTooMuch"
+            class="open-panel">
+            <div class="panel-arrow"></div>
+            <div class="item">
+              <p>每栋楼最多可标记 3 台设备，</p>
+              <p>可取消以下设备标记来完成本次操作。</p>
+            </div>
+            <div class="item list">
+              <template v-for="typeItem in focusList">
+                <div class="device-item" 
+                  v-for="device in typeItem.list"
+                  :key="device.id + 'public'" >
+                  <i class="point" />
+                  <div class="device-name">
+                    {{device.deviceProperties.location | parseLocation}}
+                    {{device.deviceName}}
+                    {{device.deviceProperties.type | typeToName}}
+                  </div>
+
+                  <img
+                    v-if="jugeId(device.id)"
+                    @click.stop="handleFocus(device, '0')" 
+                    class="attention-img" 
+                    src="~@assets/img/demo/notAttention.png" />
+
+                  <img v-else  @click.stop="handleFocus(device, '1')"
+                   class="attention-img" 
+                   src="~@assets/img/demo/attention.png" />
+                </div>
+              </template>
+            </div>
+
+            <div class="footer">
+              <button class="cancel footer" @click.stop>取消</button>
+              <button class="confirm" @click="setAttention('0', 'cancelAttention')">完成</button>
+            </div>
+          </div>
+        
+        
+        </div>
+
       </div>
-      <div class="back" @click.stop="back" ></div>
+      <div class="back" @click.stop="back" v-if="!hideBack"></div>
       <div class="close" @click.stop="close" />
     </div>
     <!--  无监控配置 -->
@@ -40,6 +85,10 @@
         <div class="info">
           <div class="sn"><i class="icon" />设备编号：{{deviceInfo.deviceSn}}</div>
           <div class="status"><i class="icon" /> 设备状态：{{deviceInfo.deviceStatus | deviceStatus}}</div>
+        </div>
+
+        <div class="info" v-if="deviceInfo.deviceName">
+          <div class="sn"><i class="icon" />设备标记：{{deviceInfo.deviceName}}</div>
         </div>
       </div>
 
@@ -52,14 +101,12 @@
             <tr>
               <th>时间</th>
               <th>事件类型</th>
-              <th>事件等级</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="(it, idx) in recordList" :key="idx + '2'">
               <td >{{it.recordTime}}</td>
               <td >{{it.status}}</td>
-              <td >{{it.alarmLvl}}</td>
             </tr>
           </tbody>
         </table>
@@ -69,10 +116,12 @@
   </div>
 </template>
 <script>
-import { mapState, mapGetters } from 'vuex'
+import { mapState, mapGetters, mapMutations } from 'vuex'
 
+import { mixAttention } from '../../../../mixins/attention.js'
 export default {
-  props: ['deviceInfo', 'type','refesh'],
+  mixins: [mixAttention],
+  props: ['deviceInfo', 'type','refesh', 'hideBack'],
   data() {
     return {
       showPanel: false,
@@ -84,17 +133,39 @@ export default {
   },
   computed: {
     ...mapState(['rank', 'rankName']),
-    ...mapGetters(['projectId']),
+    ...mapGetters(['projectId', 'focusList']),
+    focus() {
+      if(this.deviceInfo.deviceProperties.other) {
+        return this.deviceInfo.deviceProperties.other.focus 
+      } else {
+        return '0'
+      }
+    },
+    isRomm() {
+      let location = this.deviceInfo.deviceProperties.location
+      if(Array.isArray(location)){
+        location = location[0]
+      }
+      if(location.roomName){
+        return true
+      } else {
+        return false
+      }
+    }
   },
   components: {
   },
   mounted() {
+    if(!this.deviceInfo.deviceProperties.other) {
+      this.deviceInfo.deviceProperties.other = {}
+    }
   },
   methods: {
+    ...mapMutations(['toggleRefreshBuild']),
     getLogType() {
       let type = 'cloud_talk_unlock_record'
       let deviceType = this.deviceInfo.deviceProperties.type
-      if(deviceType == 'alarmgateway' || deviceType == 'facegate' || deviceType == 'faceSentry') { 
+      if(deviceType == 'alarmgateway' || deviceType == 'facegate' || deviceType == 'facesentry') { 
         type = ''
       } else if(deviceType == 'lockergateway') {
         type = 'qdh_gy_locker_locker_gateway_status'
@@ -126,8 +197,24 @@ export default {
     },
     back() {
       this.$emit('doShowList')
+    },
+    setAttention(focusDevice) {
+      this.$http({
+        method:'post',
+        url:'/api/json/platformDeviceApi/setFocusDevice',
+        data:{
+          projectId: this.projectId,
+          buildId: '',
+          deviceId: this.deviceInfo.id,
+          focusDevice,
+        }
+      })
+        .then(() => {
+          this.toggleRefreshBuild()
+          this.deviceInfo.deviceProperties.other.focus = focusDevice
+          this.deviceInfo = Object.assign({}, this.deviceInfo)
+        })
     }
-
   },
   watch: {
     refesh() {
@@ -203,6 +290,101 @@ export default {
         font-size: 18px;
         line-height: 100%;
       }
+    }
+  }
+}
+.open-panel {
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: absolute;
+  top: 38px;
+  left: 160px;
+  z-index: 999;
+  transform: translate(-50%, 0);
+  background: #3b4a55;
+  border-radius: 5px;
+  padding: 15px 24px;
+  .panel-arrow {
+    width: 0;
+    height: 0;
+    border-width: 12px;
+    border-style: solid;
+    border-color: transparent transparent #3b4a55 transparent;
+    position: absolute;
+    top: -23px;
+    left: 25px;
+    transform: translate(-50%, 0);
+  }
+
+  .item {
+    position: relative;
+    height: auto;
+    width: 304px;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 40px;
+    text-align: left;
+    line-height:24px;
+    font-size:14px;
+    &.list{
+      max-height: 350px;
+      overflow: auto;
+    }
+    .device-item{
+      margin: 16px 0;
+      display: flex;
+      align-items: center;
+      i{
+        display: inline-block;
+        width: 6px;
+        height:6px;
+        border-radius: 50%;
+        background:rgba(255,255,255,0.8);
+        margin-right: 8px;
+      }
+      .device-name{
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 12px;
+        width: 240px;
+        margin-right: 16px;
+      }
+    }
+  }
+
+  .footer{
+    position: relative;
+    height: 55px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right:16px;
+    font-size: 14px;
+    .cancel{
+      outline:none;
+      border-radius:2px;
+      border:1px solid rgba(255,255,255,0.4);
+      color:rgba(255,255,255,0.8);
+      background: transparent;
+      margin-right: 16px;
+      &.footer{
+        width: 56px;
+        height: 28px;
+      }
+    }
+    .confirm{
+      outline:none;
+      border: none;
+      color:rgba(255,255,255,1);
+      background:#00B7FF;
+      border-radius:2px;
+      &[disabled] {
+        color:rgba(255,255,255,.6);
+        background: #419dc1;
+      }
+    }
+    .footer-txt{
+      color:rgba(255,255,255,0.8);
+      margin-right: 16px;
     }
   }
 }

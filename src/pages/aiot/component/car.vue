@@ -1,75 +1,104 @@
 <template>
   <div class="people">
     <div class="title-people">
-      <div><i />车流量</div>
+      <div>
+        <i />车流量
+      </div>
     </div>
     <div class="body">
       <div class="menu-tab">
-        <div :class="[{'active': lineType == 'hour'}, 'menu-item']" @click="getData('hour')"><span></span>&nbsp;小时</div>
-        <div :class="[{'active': lineType == 'day'}, 'menu-item']" @click="getData('day')"><span></span>&nbsp;天</div>
-        <div :class="[{'active': lineType == 'month'}, 'menu-item']" @click="getData('month')"><span></span>&nbsp;月</div>
+        <div :class="[{'active': lineType == 'hour'}, 'menu-item']" @click="getData('hour')">
+          <span></span>&nbsp;小时
+        </div>
+        <div :class="[{'active': lineType == 'day'}, 'menu-item']" @click="getData('day')">
+          <span></span>&nbsp;天
+        </div>
+        <div :class="[{'active': lineType == 'month'}, 'menu-item']" @click="getData('month')">
+          <span></span>&nbsp;月
+        </div>
       </div>
-      <div class="lineChart"
-        ref="lineChart" />
+      <div class="lineChart" ref="lineChart" />
 
       <div class="analysis">
         <div class="sub-title">
-          <i class="icon-p"/>车位 
-          <span class="total">本月累计收费：<span class="yantramanav">{{ cMon | toThousandFilter}}</span>元</span>
+          <i class="icon-p" />车位
+          <span class="total">
+            本月累计收费：
+            <span class="yantramanav">{{ cMon | toThousandFilter}}</span>元
+          </span>
         </div>
-        <div class="item barTitle v-hide">车位数量统计：<span class="yantramanav">{{ parData.use + parData.free}}</span></div>
+        <div class="item barTitle v-hide">
+          车位数量统计：
+          <span class="yantramanav">{{ +parData.use + +parData.free}}</span>
+        </div>
         <div ref="barChart" id="barChart" class="barChart"></div>
         <div class="rate">
-          空置率<div class="num yantramanav">{{ parData.carRate }}</div>
+          空置率
+          <div class="num yantramanav">{{ parData.carRate}}%</div>
           <div class="label-line">
             <div>
               <span class="line line1" />
               <span class="line line2" />
-              <div class="item">占用车位:<span class="yantramanav">{{parData.use | toThousandFilter}}</span></div>
+              <div class="item">
+                占用车位:
+                <span class="yantramanav">{{parData.use | toThousandFilter}}</span>
+              </div>
             </div>
 
-            <div>
+            <div class="f-mgt19">
               <span class="line line1 yell" />
               <span class="line line2 yell" />
-              <div class="item">空闲车位:<span class="yantramanav">{{parData.free | toThousandFilter}}</span></div>
+              <div class="item">
+                空闲车位:
+                <span class="yantramanav">{{parData.free | toThousandFilter}}</span>
+              </div>
             </div>
-
           </div>
         </div>
         <div class="bottom v-hide">
-          <div class="item day">今日临停收费：<span class="yantramanav">{{ cDayGuset * 10 | toThousandFilter }}</span>元</div>
-          <div class="item mon">本月临停收费：<span class="yantramanav">{{ cMon | toThousandFilter}}</span>元</div>
-          <div class="item mon">本月月卡收费：<span class="yantramanav">{{ cMon | toThousandFilter}}</span>元</div>
+          <div class="item day">
+            今日临停收费：
+            <span class="yantramanav">{{ cDayGuset * 10 | toThousandFilter }}</span>元
+          </div>
+          <div class="item mon">
+            本月临停收费：
+            <span class="yantramanav">{{ cMon | toThousandFilter}}</span>元
+          </div>
+          <div class="item mon">
+            本月月卡收费：
+            <span class="yantramanav">{{ cMon | toThousandFilter}}</span>元
+          </div>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import echarts from 'echarts'
-import { mapState, mapGetters } from 'vuex'
+import moment from 'moment'
+import echarts from "echarts"
+import { mapState, mapGetters } from "vuex"
 
 export default {
   data() {
     return {
       parData: {
-        carRate: '0%',
-        use: '0',
-        free: '0',
-        unit: ''
+        carRate: "0.0",
+        use: "0.0",
+        free: "0.0",
+        unit: ""
       },
-      cDayGuset: '0',
-      cMon: '0',
+      cDayGuset: "0",
+      cMon: "0",
 
       inList: [],
       outList: [],
       labelList: [],
-      lineType: 'hour'
+      lineType: "hour"
     }
   },
   computed: {
-    ...mapState(['rank', 'refresh']),
-    ...mapGetters(['cityCode', 'projectId']),
+    ...mapState(["rank", "refresh"]),
+    ...mapGetters(["cityCode", "projectId"])
   },
   mounted() {
     this.getData()
@@ -78,36 +107,42 @@ export default {
 
     // 浏览器窗口改变，charts图 需要重绘
     let tid
-    window.addEventListener('resize', () => {
-      clearTimeout(tid)
-      tid = setTimeout(() => {
-        this.$refs.lineChart.removeAttribute("_echarts_instance_")
-        this.$refs.barChart.removeAttribute("_echarts_instance_")
-        this.initParChart()
-        this.initLineChart()
-      }, 300)
-    }, false)
+    window.addEventListener(
+      "resize",
+      () => {
+        clearTimeout(tid)
+        tid = setTimeout(() => {
+          this.$refs.lineChart.removeAttribute("_echarts_instance_")
+          this.$refs.barChart.removeAttribute("_echarts_instance_")
+          this.initParChart()
+          this.initLineChart()
+        }, 300)
+      },
+      false
+    )
   },
 
   methods: {
-    getData(type='hour') {
+    getData(type = "hour") {
       this.lineType = type
       this.$http({
-        method:'post',
-        url:'/api/json/ufoXcApi/getVehicleFlowStatistic',
-        data:{
+        method: "post",
+        url: "/api/json/ufoXcApi/getVehicleFlowStatistic",
+        data: {
           cityCode: this.cityCode,
           projectId: this.projectId,
-          statisticType: type
+          statisticType: type,
+          statisticMode: 'direction',
+          startTime: moment().subtract(2,'years').format('YYYY-MM-DD HH:mm:ss'),
+          endTime: moment().format('YYYY-MM-DD HH:mm:ss'),
         }
+      }).then(res => {
+        this.dealData(res)
+        this.initLineChart()
       })
-        .then((res) => {
-          this.dealData(res)
-          this.initLineChart()
-        })
     },
     getInfoData() {
-      // 接口为定义
+      // 接口未定义
     },
     dealData(res) {
       let arrIn = res.data.vechicleIn
@@ -121,153 +156,162 @@ export default {
         inList.push(el.flowData)
         labelList.push(el.statisticDate)
       })
- 
+
       arrOut.forEach(el => {
         outList.push(el.flowData)
-      }) 
+      })
 
       this.inList = inList
       this.outList = outList
-      this.labelList  = labelList
+      this.labelList = labelList
     },
     initLineChart() {
       var myChart = echarts.init(this.$refs.lineChart)
       var option = {
-        color: ['#F37D2C', '#00B7FF'],
+        color: ["#00B7FF", "#F37D2C"],
         tooltip: {
-          trigger: 'axis'
+          trigger: "axis"
         },
         legend: {
-          align: 'left',
+          align: "left",
           left: 0,
           padding: [10, 0],
           textStyle: {
-            color: 'rgba(255, 255, 255, 0.8)',
-            fontSize: 12,
+            color: "rgba(255, 255, 255, 0.8)",
+            fontSize: 12
           },
           itemWidth: 8,
-          data: [{
-            name: '进场',
-            icon: 'circle',
-          }, {
-            name: '出场',
-            icon: 'circle',
-          }],
+          data: [
+            {
+              name: "进场",
+              icon: "circle"
+            },
+            {
+              name: "出场",
+              icon: "circle"
+            }
+          ]
         },
         grid: {
-          top: '26%',
-          left: '0',
-          right: '0',
-          bottom: '10',
+          top: "26%",
+          left: "0",
+          right: "0",
+          bottom: "0",
           containLabel: true
         },
         xAxis: {
-          type: 'category',
+          type: "category",
           boundaryGap: false,
           data: this.labelList,
           // splitNumber: 24,
           axisTick: {
             show: true,
             inside: true,
-            interval: 0,
+            interval: 0
           },
           axisLabel: {
             showMinLabel: false,
             showMaxLabel: false,
             // interval: 5,
-            color: 'rgba(255,255,255,0.3)',
+            color: "rgba(255,255,255,0.3)"
           },
           splitLine: {
             show: true,
-            lineStyle:{
-              color: 'rgba(255,255,255,0.1)',
+            lineStyle: {
+              color: "rgba(255,255,255,0.1)"
             }
           },
-          axisLine:{
+          axisLine: {
             show: true,
-            lineStyle:{
-              color: 'rgba(255,255,255,0.1)',  //坐标轴的颜色
-            },
-          },
+            lineStyle: {
+              color: "rgba(255,255,255,0.1)" //坐标轴的颜色
+            }
+          }
         },
         yAxis: {
-          type: 'value',
+          type: "value",
           axisLabel: {
-            show: false,
+            show: false
           },
           axisTick: {
             show: true,
             inside: true,
-            interval: 0,
+            interval: 0
           },
           splitLine: {
             show: false
           },
-          axisLine:{
+          axisLine: {
             show: true,
-            lineStyle:{
-              color: 'rgba(255,255,255,0.1)',  //坐标轴的颜色
-            },
-          },
+            lineStyle: {
+              color: "rgba(255,255,255,0.1)" //坐标轴的颜色
+            }
+          }
         },
         series: [
           {
-            name: '进场',
-            type: 'line',
-            symbol: 'circle', // 默认是空心圆（中间是白色的），改成实心圆
+            name: "进场",
+            type: "line",
+            symbol: "circle", // 默认是空心圆（中间是白色的），改成实心圆
             symbolSize: 1,
             lineStyle: {
               width: 1,
-              type: 'solid',
+              type: "solid",
               shadowBlur: 10,
-              shadowColor: '#F37D2C',
+              shadowColor: "#F37D2C",
               shadowOffsetX: 0,
               shadowOffsetY: 0,
-              opacity: 1,
+              opacity: 1
             },
             data: this.inList,
             areaStyle: {
               normal: {
-              //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
+                //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
                     offset: 0,
-                    color: 'rgba(243, 125, 44, 0)'
-                },{
+                    color: "rgba(243, 125, 44, 0)"
+                  },
+                  {
                     offset: 1,
-                    color: 'rgba(243, 125, 44, 0.12)'
-                }]),
-                origin: 'end'
+                    color: "rgba(243, 125, 44, 0.12)"
+                  }
+                ]),
+                origin: "end"
               }
-            },
+            }
           },
           {
-            name: '出场',
-            type: 'line',
-            symbol: 'circle', // 默认是空心圆（中间是白色的），改成实心圆
+            name: "出场",
+            type: "line",
+            symbol: "circle", // 默认是空心圆（中间是白色的），改成实心圆
             symbolSize: 1,
             lineStyle: {
               width: 1,
-              type: 'solid',
+              type: "solid",
               shadowBlur: 10,
-              shadowColor: '#00B7FF',
+              shadowColor: "#00B7FF",
               shadowOffsetX: 0,
               shadowOffsetY: 0,
-              opacity: 1,
+              opacity: 1
             },
             data: this.outList,
             areaStyle: {
               normal: {
-              //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
-                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{ 
+                //颜色渐变函数 前四个参数分别表示四个位置依次为左、下、右、上
+                color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                  {
                     offset: 0,
-                    color: 'rgba(0, 183, 255, 0)'
-                },{
+                    color: "rgba(0, 183, 255, 0)"
+                  },
+                  {
                     offset: 1,
-                    color: 'rgba(0, 183, 255, 0.12)'
-                }]),
-                origin: 'end'
+                    color: "rgba(0, 183, 255, 0.12)"
+                  }
+                ]),
+                origin: "end"
               }
-            },
+            }
           }
         ]
       }
@@ -275,57 +319,66 @@ export default {
       myChart.setOption(option)
     },
     initParChart() {
-      let isSmallscreen = window.screen.availHeight < 800 // 小屏幕和大屏图饼图位置不同
+      let isSmallscreen = document.documentElement.clientHeight < 800 // 小屏幕和大屏图饼图位置不同
       let chart = echarts.init(document.getElementById('barChart'))
       let option = {
-        color: ['#F37D2C','#00B7FF' ],
+        color: ["#F37D2C", "#00B7FF"],
         grid: {
-          left: '0',
-          right: '0',
-          top: '0',
-          bottom: '0',
+          left: "0",
+          right: "0",
+          top: "0",
+          bottom: "0",
           containLabel: true
         },
         // calculable: true,
-        series: [{
-            name: '车位',
-            type: 'pie',
+        series: [
+          {
+            name: "车位",
+            type: "pie",
             radius: [40, 42],
-            center: isSmallscreen ? ['15%', '50%'] : ['37%', '35%'],
+            center: isSmallscreen ? ["15%", "50%"] : ["37%", "35%"],
             // roseType: 'radius',
             startAngle: 0,
-            hoverOffset: 2,
+            //hoverOffset: 2,
+            hoverAnimation: false,
             label: {
               normal: {
                 show: false,
-                formatter: function(val) {   //让series 中的文字进行换行
-                    return val.name.split(" ").join("\n\n")
+                formatter: function(val) {
+                  //让series 中的文字进行换行
+                  return val.name.split(" ").join("\n\n")
                 }
-              },
+              }
             },
             labelLine: {
               normal: {
                 show: false,
                 length: 6,
                 length2: 12,
-                lineStyle: {
-                },
-              },
+                lineStyle: {}
+              }
             },
             emphasis: {
-              itemStyle: {
-              }
+              itemStyle: {}
             },
             itemStyle: {
               shadowBlur: 10,
-              shadowColor: '#00B7FF',
+              shadowColor: "#00B7FF",
               shadowOffsetX: 0,
               shadowOffsetY: 0,
-              opacity: 1,
+              opacity: 1
             },
             data: [
-              { value: this.parData.free, name: `空闲车位 ${this.parData.free}` },
-              { value: this.parData.use , name: `占用车位 ${this.parData.use}` }
+              {
+                value: this.parData.free,
+                name: `空闲车位 ${this.parData.free}`,
+                itemStyle: {
+                  borderColor: "#F37D2C",
+                  borderWidth: 2,
+                  shadowColor: "#F37D2C"
+                }
+              },
+              { value: this.parData.use, name: `占用车位 ${this.parData.use}` }
             ]
           }
         ]
@@ -334,11 +387,11 @@ export default {
       chart.setOption(option)
       //设置默认选中高亮部分
       chart.dispatchAction({
-        type: 'highlight',
+        type: "highlight",
         seriesIndex: 0,
         dataIndex: 0
       })
-    },
+    }
   },
   watch: {
     refresh() {
@@ -378,10 +431,10 @@ export default {
       }
     }
   }
-  .body{
+  .body {
     position: relative;
   }
-  .menu-tab{
+  .menu-tab {
     position: absolute;
     right: 0;
     top: 4px;
@@ -390,51 +443,52 @@ export default {
 
     font-size: 12px;
     z-index: 9;
-    span{
+    span {
       display: inline-block;
-      width:14px;
-      height:14px;
-      border:1px solid rgba(255,255,255,0.2);
+      width: 14px;
+      height: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
       border-radius: 50%;
     }
     .menu-item {
+      cursor: pointer;
       display: flex;
       align-items: center;
-      margin-left:20px;
-      &.active{
-        span{
+      margin-left: 20px;
+      &.active {
+        span {
           position: relative;
-          border:1px solid rgba(0,183,255,1);
-          &::after{
-            content: '';
-              border-radius: 50%;
+          border: 1px solid rgba(0, 183, 255, 1);
+          &::after {
+            content: "";
+            border-radius: 50%;
             display: inline-block;
-            width:8px;
+            width: 8px;
             height: 8px;
-            background: #00B7FF;
+            background: #00b7ff;
             margin: auto;
 
             position: absolute;
-            top:50%;
-            left:50%;
+            top: 50%;
+            left: 50%;
             transform: translate(-50%, -50%);
           }
         }
       }
     }
-
   }
   .lineChart {
     width: 340px;
     height: 124px;
   }
 
-  .analysis{
+  .analysis {
     position: relative;
-    .sub-title{
+    .sub-title {
+      margin-top: 28px;
       border-bottom: 1px solid rgba(255, 255, 255, 0.16);
     }
-    i.icon-p{
+    i.icon-p {
       vertical-align: sub;
       display: inline-block;
       width: 18px;
@@ -443,24 +497,25 @@ export default {
       background: url("~@assets/img/demo/icon-p.png");
       background-size: 100% 100%;
     }
-    .total{
+    .total {
       display: none;
     }
 
-    .item{
+    .item {
       margin-bottom: 2px;
       font-size: 12px;
-      color:rgba(255,255,255,0.8);
+      color: rgba(255, 255, 255, 0.8);
     }
-    .barTitle{
+    .barTitle {
       position: absolute;
       top: 20;
       left: 0;
-      span{
-        font-size:20px;
+      span {
+        font-size: 20px;
       }
     }
     .rate{
+      pointer-events: none;
       text-align: center;
       position: absolute;
       top: 25.5%;
@@ -476,67 +531,70 @@ export default {
       align-items: center;
       flex-direction: column;
 
-      .label-line{
+      .label-line {
         position: absolute;
         left: 120px;
-        top:0;
-        .line{
+        top: 0;
+        .line {
           display: inline-block;
-          width: 10px;
+          width: 14px;
           height: 1px;
-          background: #00B7FF;
+          background: #00b7ff;
           position: absolute;
         }
-        .line1{
+        .line1 {
           transform: rotate(-45deg);
-          left: -38px;
-          top: 41%;
-          &.yell{
+          left: -37px;
+          top: 20px;
+          &.yell {
             transform: rotate(45deg);
-            left: -36px;
-            top: 82%;
-            background: #F37D2C;
+            left: -37px;
+            top: 59px;
+            background: #f37d2c;
           }
         }
-        .line2{
-          top: 36%;
-          left: -30px;
+        .line2 {
+          top: 15px;
+          left: -25px;
           width: 20px;
-          &.yell{
-            top: 87%;
-            left: -29px;
-            width: 26px;
-            background: #F37D2C;
+          &.yell {
+            top: 64px;
+            // left: -29px;
+            // width: 26px;
+            background: #f37d2c;
           }
         }
 
-
-        .item{
+        .item {
           white-space: nowrap;
-          span{
-            font-size:20px;
+          span {
+            font-size: 20px;
             color: #fff;
           }
         }
       }
 
-      color:rgba(255,255,255,.5);
-      .num{
+      color: rgba(255, 255, 255, 0.5);
+      .num {
         font-size: 20px;
         color: #fff;
       }
     }
-    .bottom{
+    .bottom {
       position: absolute;
       bottom: 0;
-      span{
+      span {
         font-size: 20px;
       }
     }
-    .barChart{
+    .barChart {
       width: 340px;
       height: 240px;
     }
+  }
+
+  .f-mgt19 {
+    margin-top: 19px;
   }
 }
 
@@ -549,20 +607,23 @@ export default {
       height: 114px;
     }
 
-    .analysis{
+    .analysis {
       position: relative;
-      .total{
+      .sub-title {
+        margin-top: 0;
+      }
+      .total {
         display: inline-block;
         margin-left: 24px;
         span {
-          font-size:20px;
+          font-size: 20px;
         }
       }
-      .barChart{
+      .barChart {
         width: 300px;
         height: 100px;
       }
-      .rate{
+      .rate {
         top: 30%;
         left: 5px;
         transform: translate(0, 0);

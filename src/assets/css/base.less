@@ -21,6 +21,23 @@
     background:rgba(255,255,255,0.08);
   }
 }
+input:-webkit-autofill,
+textarea:-webkit-autofill,
+select:-webkit-autofill,
+input:-internal-autofill-selected {
+  /*-webkit-box-shadow: 0 0 0px 1000px white inset;*/
+  border: none !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  transition-delay: 99999s;
+  transition: color 99999s ease-out, background-color 99999s ease-out;
+}
+
 html, body{
   height: 100%;
   background:rgba(244,244,244,1);
@@ -74,7 +91,7 @@ html, body{
   bottom: 0;
   z-index: -1;
   filter: blur(5px);
-  background: hsla(179, 84%, 17%, 0.7);
+  background: rgba(7,78,77,0.3);
   &.red{
     background: hsla(0, 89%, 18%, 0.6);
   }
@@ -95,6 +112,11 @@ html, body{
     background-size: 100% 100%;
     transform:rotate(90deg);
   }
+  &.offline{
+    background: url("~@assets/img/demo/city/arrow2.png");
+    background-size: 100% 100%;
+    transform:rotate(90deg);
+  }
 }
 .border-2{
   right: -6px;
@@ -103,6 +125,11 @@ html, body{
   background-size: 100% 100%;
   &.red{
     background: url("~@assets/img/demo/city/arrow1.png");
+    background-size: 100% 100%;
+    transform:rotate(180deg);
+  }
+  &.offline{
+    background: url("~@assets/img/demo/city/arrow2.png");
     background-size: 100% 100%;
     transform:rotate(180deg);
   }
@@ -116,6 +143,10 @@ html, body{
     background: url("~@assets/img/demo/city/arrow1.png");
     background-size: 100% 100%;
   }
+  &.offline{
+    background: url("~@assets/img/demo/city/arrow2.png");
+    background-size: 100% 100%;
+  }
 }
 .border-4{
   left: -6px;
@@ -124,6 +155,11 @@ html, body{
   background-size: 100% 100%;
   &.red{
     background: url("~@assets/img/demo/city/arrow1.png");
+    background-size: 100% 100%;
+    transform:rotate(270deg);
+  }
+  &.offline{
+    background: url("~@assets/img/demo/city/arrow2.png");
     background-size: 100% 100%;
     transform:rotate(270deg);
   }

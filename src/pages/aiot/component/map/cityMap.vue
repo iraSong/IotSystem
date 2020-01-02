@@ -21,7 +21,7 @@ export default {
   data() {
     return {
       map: '',
-      currentZoom: 12,
+      currentZoom: 11,
       projectList: CommunityPos,
     }
   },
@@ -29,12 +29,12 @@ export default {
     ...mapState(['rank','rankObj', 'refresh', 'showMask']),
     ...mapGetters(['cityCode']),
     zoomInClass() {
-      if(this.currentZoom >= 13) {
+      if(this.currentZoom >= 15) {
         return 'disPoint'
       }
     },
     zoomOutClass() {
-      if(this.currentZoom <=11) {
+      if(this.currentZoom <=9) {
         return 'disPoint'
       }
     },
@@ -66,14 +66,14 @@ export default {
       let map = this.map
       this.currentZoom = map.getZoom()
       let zoom = this.currentZoom + val
-      if(zoom > 13 || zoom <11) return
+      if(zoom > 15 || zoom < 9) return
       map.setZoom(zoom) // 设置地图层级
       // map.zoomIn() // 地图放大一级显示
       // map.zoomOut() // 地图缩小一级显示
     },
     setCenter() {
       let center = window.localStorage.getItem('aiot-map-center').split(',')
-      this.map.setZoomAndCenter(12,center)
+      this.map.setZoomAndCenter(11,center)
     }
   },
   watch: {
@@ -92,6 +92,7 @@ export default {
   left:0;
   width: 100%;
   height: 100%;
+  background: rgb(0, 53, 88)!important; // 防止地图白屏
   .mask{
     pointer-events: none;
     position: absolute;
